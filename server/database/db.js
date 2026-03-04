@@ -14,6 +14,8 @@ export const sequelize = new Sequelize(
 export const connection = async () => {
   try {
     await sequelize.authenticate();
+    await sequelize.sync({ alter: true }); // ← TEMPORARILY
+
     console.log("Connection has been established successfully.");
 
     await sequelize.sync();

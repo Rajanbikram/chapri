@@ -1,11 +1,33 @@
-const BookingConfirmation = ({ bookingData, selectedSeat }) => {
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
+
+const BookingConfirmation = () => {
+  const { state } = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const bookingData = state?.bookingData;
+  const selectedSeat = state?.selectedSeat;
+  const flight = state?.flight;
+
+  if (!bookingData || !flight) {
+    return (
+      <div style={{ padding: 40, textAlign: "center" }}>
+        <p style={{ color: "var(--muted-fg)", marginBottom: 16 }}>No booking found.</p>
+        <button className="btn btn-primary" onClick={() => navigate("/dashboard/search")}>
+          Search Flights
+        </button>
+      </div>
+    );
+  }
+
   const details = [
-    ["Booking ID", bookingData?.id ? `VY-BK-${bookingData.id}` : "VY-BK-78452"],
-    ["Flight", "VY-201 · DEL → BLR"],
-    ["Date", "15 Mar 2026, 06:15"],
-    ["Seat", selectedSeat || "A14"],
-    ["Passenger", "Arjun Patel"],
-    ["Amount Paid", `₹${bookingData?.totalAmount || 4850}`],
+    ["Booking ID", `VY-BK-${bookingData.id}`],
+    ["Flight", `${flight.flightNo} · ${flight.from} → ${flight.to}`],
+    ["Date", `${flight.date || ""} ${flight.dep || ""}`],
+    ["Seat", selectedSeat || "N/A"],
+    ["Passenger", user?.name || "N/A"],
+    ["Amount Paid", `₹${bookingData.totalAmount || flight.price}`],
   ];
 
   return (
@@ -25,7 +47,9 @@ const BookingConfirmation = ({ bookingData, selectedSeat }) => {
           ))}
         </div>
         <button className="btn btn-primary btn-full">⬇ Download E-Ticket</button>
-        <div className="confirm-note">Confirmation details have been sent to arjun@email.com</div>
+        <div className="confirm-note">
+          Confirmation details have been sent to {user?.email || "your email"}
+        </div>
       </div>
     </div>
   );

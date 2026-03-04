@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../../../services/auth/authService";
 import { useAuth } from "../../../context/AuthContext";
 
 const Login = () => {
@@ -18,9 +17,7 @@ const Login = () => {
     setError("");
     setLoading(true);
     try {
-      const data = await loginUser(form);
-      login(data.token, data.user);
-      navigate("/dashboard");
+      await login(form.email, form.password); // ← AuthContext ko login call garne
     } catch (err) {
       setError(err.response?.data?.message || "Login failed.");
     } finally {
@@ -53,19 +50,31 @@ const Login = () => {
           <h1 style={{ fontSize:"1.6rem", fontWeight:800, color:"#111", marginBottom:4 }}>Welcome Back</h1>
           <p style={{ fontSize:".87rem", color:"#888", marginBottom:22 }}>Enter your credentials to access your flights and bookings.</p>
 
-          {error && <div style={{ background:"#fff5f5", border:"1px solid #fc8181", color:"#c53030", padding:"10px 14px", borderRadius:8, marginBottom:16, fontSize:".87rem" }}>{error}</div>}
+          {error && (
+            <div style={{ background:"#fff5f5", border:"1px solid #fc8181", color:"#c53030", padding:"10px 14px", borderRadius:8, marginBottom:16, fontSize:".87rem" }}>
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit}>
             <label style={{ display:"block", fontSize:".8rem", fontWeight:600, color:"#444", marginBottom:6 }}>Email Address</label>
             <div style={{ display:"flex", alignItems:"center", gap:9, border:"1.5px solid #ddd", borderRadius:9, padding:"10px 14px", marginBottom:14 }}>
               <svg width="16" height="16" fill="none" stroke="#aaa" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              <input type="email" name="email" placeholder="e.g. name@airline.com" value={form.email} onChange={handleChange} required style={{ border:"none", outline:"none", fontSize:".9rem", color:"#333", width:"100%", background:"transparent" }} />
+              <input
+                type="email" name="email" placeholder="e.g. name@airline.com"
+                value={form.email} onChange={handleChange} required
+                style={{ border:"none", outline:"none", fontSize:".9rem", color:"#333", width:"100%", background:"transparent" }}
+              />
             </div>
 
             <label style={{ display:"block", fontSize:".8rem", fontWeight:600, color:"#444", marginBottom:6 }}>Password</label>
             <div style={{ display:"flex", alignItems:"center", gap:9, border:"1.5px solid #ddd", borderRadius:9, padding:"10px 14px", marginBottom:8 }}>
               <svg width="16" height="16" fill="none" stroke="#aaa" strokeWidth="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-              <input type={showPw ? "text" : "password"} name="password" placeholder="Enter your password" value={form.password} onChange={handleChange} required style={{ border:"none", outline:"none", fontSize:".9rem", color:"#333", width:"100%", background:"transparent" }} />
+              <input
+                type={showPw ? "text" : "password"} name="password" placeholder="Enter your password"
+                value={form.password} onChange={handleChange} required
+                style={{ border:"none", outline:"none", fontSize:".9rem", color:"#333", width:"100%", background:"transparent" }}
+              />
               <span onClick={() => setShowPw(!showPw)} style={{ cursor:"pointer", color:"#aaa" }}>
                 <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               </span>
@@ -91,4 +100,5 @@ const Login = () => {
     </div>
   );
 };
+
 export default Login;
