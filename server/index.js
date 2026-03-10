@@ -32,6 +32,7 @@ import ownerSeatRoutes from "./Routes/owner/ownerSeatRoutes.js";
 import ownerBookingRoutes from "./Routes/owner/ownerBookingRoutes.js";
 import ownerCancellationRoutes from "./Routes/owner/ownerCancellationRoutes.js";
 import ownerUserRoutes from "./Routes/owner/ownerUserRoutes.js";
+import ownerOverviewRoutes from "./Routes/owner/ownerOverviewRoutes.js";
 
 import { errorHandler } from "./middleware/errorMiddleware.js";
 
@@ -59,6 +60,7 @@ app.use("/api/owner/seats", ownerSeatRoutes);
 app.use("/api/owner/bookings", ownerBookingRoutes);
 app.use("/api/owner/flights", ownerCancellationRoutes);
 app.use("/api/owner/users", ownerUserRoutes);
+app.use("/api/owner", ownerOverviewRoutes);
 
 app.use(errorHandler);
 

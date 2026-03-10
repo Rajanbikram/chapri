@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import "../../../css/owner.css";
 
@@ -32,6 +32,14 @@ const OwnerDashboard = () => {
 
   const currentKey = location.pathname.replace("/owner-dashboard/", "").replace("/owner-dashboard", "");
 
+  // Back button disable — logout nagari dashboard bata najaos
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+    const handlePop = () => window.history.pushState(null, "", window.location.href);
+    window.addEventListener("popstate", handlePop);
+    return () => window.removeEventListener("popstate", handlePop);
+  }, []);
+
   const showToast = (msg) => {
     setToast(msg);
     setTimeout(() => setToast(null), 3000);
@@ -39,6 +47,13 @@ const OwnerDashboard = () => {
 
   const goTo = (key) => {
     navigate(key ? `/owner-dashboard/${key}` : "/owner-dashboard");
+  };
+
+  const handleSignOut = () => {
+    setProfileOpen(false);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -79,15 +94,16 @@ const OwnerDashboard = () => {
             </button>
             <div style={{ position: "relative" }}>
               <button className="profile-btn" onClick={() => setProfileOpen(!profileOpen)}>
-                <div className="avatar">RK</div>
-                <div><div className="profile-name">Rajiv Kapoor</div><div className="profile-role">Airline Owner</div></div>
+                <div className="avatar">AO</div>
+                {/* ✅ Name hatayo — sirf role dekhauxa */}
+                <div><div className="profile-role">Airline Owner</div></div>
               </button>
               {profileOpen && (
                 <div className="profile-dropdown show">
                   <button onClick={() => setProfileOpen(false)}>Profile Settings</button>
                   <button onClick={() => setProfileOpen(false)}>Help & Support</button>
                   <hr />
-                  <button className="sign-out" onClick={() => { setProfileOpen(false); navigate("/login"); }}>Sign Out</button>
+                  <button className="sign-out" onClick={handleSignOut}>Sign Out</button>
                 </div>
               )}
             </div>
@@ -101,7 +117,6 @@ const OwnerDashboard = () => {
         </main>
       </div>
 
-      {/* TOAST */}
       {toast && <div className="toast">{toast}</div>}
     </div>
   );

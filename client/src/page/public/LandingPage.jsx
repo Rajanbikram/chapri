@@ -1,9 +1,17 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handle = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handle);
+    return () => window.removeEventListener("resize", handle);
+  }, []);
 
   return (
     <div style={{ fontFamily: "'Segoe UI', Arial, sans-serif", color: "#222" }}>
@@ -11,30 +19,64 @@ const LandingPage = () => {
 
       {/* HERO */}
       <section style={{
-        position: "relative", minHeight: 520,
-        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-        textAlign: "center", padding: "80px 20px", overflow: "hidden"
+        position: "relative",
+        minHeight: "100svh",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center",
+        textAlign: "center",
+        padding: isMobile ? "120px 20px 60px" : "130px 20px 80px",
+        overflow: "hidden"
       }}>
         <div style={{
           position: "absolute", inset: 0,
           backgroundImage: "url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=1400&q=80')",
-          backgroundSize: "cover", backgroundPosition: "center", filter: "brightness(.52)"
+          backgroundSize: "cover", backgroundPosition: "center",
+          filter: "brightness(.52)"
         }} />
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <h1 style={{ fontSize: "2.8rem", fontWeight: 800, color: "#fff", maxWidth: 620, lineHeight: 1.14, marginBottom: 16 }}>
+        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 680, margin: "0 auto" }}>
+          <h1 style={{
+            fontSize: isMobile ? "2rem" : "2.8rem",
+            fontWeight: 800, color: "#fff",
+            lineHeight: 1.2, marginBottom: 16,
+            padding: "0 8px"
+          }}>
             Explore the World Without Limits
           </h1>
-          <p style={{ color: "#b8cfff", fontSize: "1rem", maxWidth: 430, margin: "0 auto 36px", lineHeight: 1.65 }}>
+          <p style={{
+            color: "#b8cfff",
+            fontSize: isMobile ? ".92rem" : "1rem",
+            maxWidth: 430, margin: "0 auto 36px",
+            lineHeight: 1.65, padding: "0 12px"
+          }}>
             Book your next adventure with real-time updates, no hidden fees, and the best prices guaranteed.
           </p>
-          <div style={{ display: "flex", gap: 14, justifyContent: "center" }}>
+          <div style={{
+            display: "flex", gap: 12,
+            justifyContent: "center",
+            flexDirection: isMobile ? "column" : "row",
+            alignItems: "center",
+            padding: "0 24px"
+          }}>
             <button
               onClick={() => navigate("/register")}
-              style={{ padding: "13px 32px", background: "#1d6af4", color: "#fff", border: "none", borderRadius: 8, fontSize: "1rem", fontWeight: 700, cursor: "pointer" }}>
+              style={{
+                padding: "13px 32px",
+                background: "#1d6af4", color: "#fff",
+                border: "none", borderRadius: 8,
+                fontSize: ".97rem", fontWeight: 700,
+                cursor: "pointer",
+                width: isMobile ? "100%" : "auto"
+              }}>
               Get Started
             </button>
-            <button
-              style={{ padding: "13px 32px", background: "transparent", color: "#fff", border: "2px solid rgba(255,255,255,.6)", borderRadius: 8, fontSize: "1rem", fontWeight: 600, cursor: "pointer" }}>
+            <button style={{
+              padding: "13px 32px",
+              background: "transparent", color: "#fff",
+              border: "2px solid rgba(255,255,255,.6)",
+              borderRadius: 8, fontSize: ".97rem",
+              fontWeight: 600, cursor: "pointer",
+              width: isMobile ? "100%" : "auto"
+            }}>
               Explore Destinations
             </button>
           </div>
@@ -42,7 +84,15 @@ const LandingPage = () => {
       </section>
 
       {/* FEATURES */}
-      <section style={{ background: "#f4f6fb", padding: "70px 40px", display: "flex", justifyContent: "center", gap: 64, flexWrap: "wrap" }}>
+      <section style={{
+        background: "#f4f6fb",
+        padding: isMobile ? "48px 24px" : "70px 40px",
+        display: "flex", justifyContent: "center",
+        gap: isMobile ? 36 : 64,
+        flexDirection: isMobile ? "column" : "row",
+        alignItems: isMobile ? "center" : "flex-start",
+        flexWrap: "wrap"
+      }}>
         {[
           {
             title: "Best Prices",
@@ -75,14 +125,57 @@ const LandingPage = () => {
             )
           },
         ].map(f => (
-          <div key={f.title} style={{ textAlign: "center", maxWidth: 200 }}>
-            <div style={{ width: 54, height: 54, borderRadius: "50%", background: "#e8f0fe", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 15px" }}>
+          <div key={f.title} style={{
+            textAlign: "center",
+            width: isMobile ? "100%" : 200,
+            maxWidth: 280
+          }}>
+            <div style={{
+              width: 54, height: 54, borderRadius: "50%",
+              background: "#e8f0fe",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              margin: "0 auto 15px"
+            }}>
               {f.icon}
             </div>
             <h3 style={{ fontSize: ".98rem", fontWeight: 700, marginBottom: 8 }}>{f.title}</h3>
             <p style={{ fontSize: ".83rem", color: "#666", lineHeight: 1.65 }}>{f.desc}</p>
           </div>
         ))}
+      </section>
+
+      {/* CTA */}
+      <section style={{
+        background: "linear-gradient(135deg, #1d6af4 0%, #0a3fa0 100%)",
+        padding: isMobile ? "48px 24px" : "70px 20px",
+        textAlign: "center"
+      }}>
+        <h2 style={{
+          fontSize: isMobile ? "1.4rem" : "1.8rem",
+          fontWeight: 800, color: "#fff", marginBottom: 12
+        }}>
+          Ready to Take Off?
+        </h2>
+        <p style={{
+          color: "rgba(255,255,255,.8)",
+          fontSize: ".95rem",
+          maxWidth: 400, margin: "0 auto 28px"
+        }}>
+          Join thousands of travellers who trust SkyBound for their journeys.
+        </p>
+        <button
+          onClick={() => navigate("/register")}
+          style={{
+            padding: "14px 40px",
+            background: "#fff", color: "#1d6af4",
+            border: "none", borderRadius: 8,
+            fontSize: "1rem", fontWeight: 700,
+            cursor: "pointer",
+            width: isMobile ? "100%" : "auto",
+            maxWidth: 300
+          }}>
+          Create Free Account
+        </button>
       </section>
 
       <Footer />

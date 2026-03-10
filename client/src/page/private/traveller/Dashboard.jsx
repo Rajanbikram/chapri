@@ -21,6 +21,14 @@ const Dashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Back button disable — logout nagari dashboard bata najaos
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+    const handlePop = () => window.history.pushState(null, "", window.location.href);
+    window.addEventListener("popstate", handlePop);
+    return () => window.removeEventListener("popstate", handlePop);
+  }, []);
+
   useEffect(() => {
     getMyBookings()
       .then((data) => setBookings(data.bookings || []))
@@ -30,17 +38,20 @@ const Dashboard = () => {
 
   const totalSpent = bookings.reduce((sum, b) => sum + (b.totalAmount || 0), 0);
   const upcoming = bookings.filter((b) => b.status === "Confirmed").length;
-
   const stats = [
-    { label: "Total Bookings", value: bookings.length, icon: "✈", change: `+${bookings.length} total` },
-    { label: "Upcoming Flights", value: upcoming, icon: "📅", change: upcoming > 0 ? "Confirmed bookings" : "No upcoming" },
-    { label: "Total Spent", value: `₹${totalSpent.toLocaleString()}`, icon: "💳", change: bookings.length > 0 ? `Avg ₹${Math.round(totalSpent / bookings.length).toLocaleString()}` : "₹0" },
-    { label: "Miles Earned", value: (bookings.length * 350).toLocaleString(), icon: "🕐", change: `+${bookings.length * 350} total` },
+    { label: "Total Bookings",  value: bookings.length,                icon: "✈", change: `+${bookings.length} total` },
+    { label: "Upcoming Flights", value: upcoming,                      icon: "📅", change: upcoming > 0 ? "Confirmed bookings" : "No upcoming" },
+    { label: "Total Spent",      value: `₹${totalSpent.toLocaleString()}`, icon: "💳", change: bookings.length > 0 ? `Avg ₹${Math.round(totalSpent / bookings.length).toLocaleString()}` : "₹0" },
+    { label: "Miles Earned",     value: (bookings.length * 350).toLocaleString(), icon: "🕐", change: `+${bookings.length * 350} total` },
   ];
-
   const recentBookings = bookings.slice(0, 5);
-
   const goTo = (key) => navigate(`/dashboard/${key}`);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login", { replace: true }); // replace:true — logout garesi back thichda dashboard naauxa
+  };
 
   return (
     <div>
@@ -72,19 +83,18 @@ const Dashboard = () => {
             <div style={{ position: "relative" }}>
               <button className="header-profile" onClick={() => setProfileOpen(!profileOpen)}>
                 <div className="header-avatar">A</div>
-                Arjun Patel ▾
+                ▾
               </button>
               {profileOpen && (
                 <div className="profile-dropdown open">
                   <button onClick={() => setProfileOpen(false)}>My Profile</button>
                   <button onClick={() => setProfileOpen(false)}>Settings</button>
-                  <button onClick={() => { setProfileOpen(false); navigate("/login"); }}>Logout</button>
+                  <button onClick={() => { setProfileOpen(false); handleLogout(); }}>Logout</button>
                 </div>
               )}
             </div>
           </div>
         </div>
-
         <div className="content">
           <div className="section">
             <Outlet context={{ stats, recentBookings, loading }} />
